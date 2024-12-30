@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'ajout_produit.dart';
 import 'ajout_vente.dart';
@@ -138,20 +139,60 @@ class HomeContent extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: const [
-                      CircleAvatar(
-                        radius: 20,
-                        backgroundColor: Colors.grey,
-                        child: Icon(Icons.person, color: Colors.white),
-                      ),
-                      SizedBox(width: 10),
-                      Text(
-                        'Bienvenue(e): Admin',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                    ],
+                  StreamBuilder<User?>(
+                    stream: FirebaseAuth.instance.authStateChanges(),
+                    builder: (context, userSnapshot) {
+                      if (userSnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
+                      if (!userSnapshot.hasData) {
+                        return const Center(
+                            child: Text('Utilisateur non connecté.'));
+                      }
+
+                      final user = userSnapshot.data!;
+                      return FutureBuilder<DocumentSnapshot>(
+                        future: FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(user.uid)
+                            .get(),
+                        builder: (context, userDataSnapshot) {
+                          if (userDataSnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+
+                          if (!userDataSnapshot.hasData) {
+                            return const Center(
+                                child:
+                                    Text('Données utilisateur non trouvées.'));
+                          }
+
+                          final userData = userDataSnapshot.data!.data()
+                              as Map<String, dynamic>;
+                          final prenom = userData['prenom'] ?? 'Utilisateur';
+
+                          return Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 20,
+                                backgroundColor: Colors.grey,
+                                child: Icon(Icons.person, color: Colors.white),
+                              ),
+                              SizedBox(width: 10),
+                              Text(
+                                'Bienvenue(e): $prenom',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 16),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
                   ),
                   IconButton(
                     icon: const Icon(Icons.menu),
@@ -219,6 +260,7 @@ class HomeContent extends StatelessWidget {
                   ),
                 ],
               ),
+              const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
