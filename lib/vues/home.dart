@@ -125,7 +125,10 @@ class HomeContent extends StatelessWidget {
                           fontSize: 16,
                         ),
                       ),
-                       IconButton(
+                       
+                    ],
+                  ),
+                 IconButton(
                     icon: const Icon(Icons.menu),
                     onPressed: () {
                       showMenu(
@@ -153,14 +156,6 @@ class HomeContent extends StatelessWidget {
                           ),
                         ],
                       );
-                    },
-                  ),
-                    ],
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.menu),
-                    onPressed: () {
-                     
                     },
                   ),
                 ],
