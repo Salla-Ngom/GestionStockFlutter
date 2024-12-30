@@ -24,7 +24,7 @@ class Home extends StatelessWidget {
           ),
         ),
       ),
-      body: const HomePage(),
+      body: SingleChildScrollView(child:const HomePage(),),
     );
   }
 }
@@ -80,6 +80,34 @@ class _HomePageState extends State<HomePage> {
 
 class HomeContent extends StatelessWidget {
   const HomeContent({super.key});
+  void _afficherDetailsVente(
+      BuildContext context, Map<String, dynamic> venteData) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Détails de la Vente'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Nom Client : ${venteData['nomClient'] ?? 'Non spécifié'}'),
+              Text('Produit : ${venteData['nomProduit'] ?? 'Non spécifié'}'),
+              Text('Quantité : ${venteData['quantite'] ?? 'Non spécifié'}'),
+              Text('Prix Total : ${venteData['prixTotal'] ?? 'Non spécifié'}'),
+              Text('Date : ${venteData['date'] ?? 'Non spécifié'}'),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Fermer'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -240,6 +268,90 @@ class HomeContent extends StatelessWidget {
                     );
                   },
                 ),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Ventes',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+              StreamBuilder<QuerySnapshot>(
+                stream:
+                    FirebaseFirestore.instance.collection('ventes').snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return const Center(child: Text('Aucune vente trouvée.'));
+                  }
+
+                  final ventes = snapshot.data!.docs;
+
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: ventes.length,
+                    itemBuilder: (context, index) {
+                      final venteData =
+                          ventes[index].data() as Map<String, dynamic>;
+                      final docId = ventes[index].id; 
+                      final nomClient = venteData['nomClient'] ?? 'Nom inconnu';
+
+                      return Card(
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        elevation: 4,
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                             
+                              Text(
+                                'ID Vente : $docId',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              
+                              Text(
+                                'Client : $nomClient',
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                              const SizedBox(height: 12),
+                              
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    
+                                    _afficherDetailsVente(context, venteData);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blue,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 8,
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'Voir détails',
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
             ],
           ),
