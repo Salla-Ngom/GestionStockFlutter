@@ -24,10 +24,9 @@ class _AjoutPageBodyState extends State<AjoutPageBody> {
   final TextEditingController _nomController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _quantiteController = TextEditingController();
-  final TextEditingController _prixController = TextEditingController(); 
+  final TextEditingController _prixController = TextEditingController();
   final FirebaseService _firebaseService = FirebaseService();
 
-  
   void _ajouterProduit() {
     final String nomProduit = _nomController.text;
     final String description = _descriptionController.text;
@@ -40,13 +39,15 @@ class _AjoutPageBodyState extends State<AjoutPageBody> {
         prix > 0) {
       final produit = Produits(nomProduit, description, quantite, prix);
       _firebaseService.addProduit(produit).then((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Produit ajouté avec succès !')),
-        );
-        _nomController.clear();
-        _descriptionController.clear();
-        _quantiteController.clear();
-        _prixController.clear(); 
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Produit ajouté avec succès !')),
+          );
+          _nomController.clear();
+          _descriptionController.clear();
+          _quantiteController.clear();
+          _prixController.clear();
+        }
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

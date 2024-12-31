@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/vente.dart';
+import 'package:flutter/foundation.dart'; 
 
 class FirestoreVente {
   final FirebaseFirestore _firestoreVente = FirebaseFirestore.instance;
@@ -13,7 +14,7 @@ class FirestoreVente {
         'date': vente.date,
       });
     } catch (e) {
-      print('');
+     debugPrint("erreur");
     }
   }
 }

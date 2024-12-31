@@ -209,14 +209,18 @@ class HomeContent extends StatelessWidget {
                               style: TextStyle(color: Colors.red),
                             ),
                             onTap: () async {
-                              final Auth _auth = Auth();
-                              await _auth.signOut();
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const PageConnexion()),
-                              );
+                              final Auth auth = Auth();
+                              await auth.signOut();
+
+                              if (context.mounted) {
+                                // Vérification si le widget est encore monté
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const PageConnexion(),
+                                  ),
+                                );
+                              }
                             },
                           ),
                         ],
@@ -295,14 +299,21 @@ class HomeContent extends StatelessWidget {
                             onPressed: () async {
                               try {
                                 await FirebaseService().supprimerProduit(docId);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text('Produit supprimé.')),
-                                );
+
+                                if (context.mounted) {
+                                  // Vérifie si le widget est monté avant de faire l'affichage
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text('Produit supprimé.')),
+                                  );
+                                }
                               } catch (e) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Erreur : $e')),
-                                );
+                                if (context.mounted) {
+                                  // Vérifie si le widget est monté avant de faire l'affichage
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Erreur : $e')),
+                                  );
+                                }
                               }
                             },
                           ),
@@ -448,7 +459,8 @@ class InfoCard extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 5),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: (0.1 * 255)),
+
           borderRadius: BorderRadius.circular(10),
         ),
         child: Column(

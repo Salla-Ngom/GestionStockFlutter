@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart'; 
 import '../models/produit.dart';
 
 class FirebaseService {
@@ -12,9 +13,10 @@ class FirebaseService {
         'quantite': produit.quantite,
         'prix': produit.prix,
       });
-      print("Produit ajouté avec succès !");
+      debugPrint("Produit ajouté avec succès !");
     } catch (e) {
-      print("Erreur lors de l'ajout du produit : $e");
+      debugPrint("Erreur lors de l'ajout du produit : $e");
+      throw Exception("Erreur lors de l'ajout du produit");
     }
   }
 
@@ -24,10 +26,11 @@ class FirebaseService {
         'nomProduit': produit.nomProduit,
         'description': produit.description,
         'quantite': produit.quantite,
+        'prix': produit.prix,
       });
-      print("Produit mis à jour avec succès !");
+      debugPrint("Produit mis à jour avec succès !");
     } catch (e) {
-      print("Erreur lors de la mise à jour du produit : $e");
+      debugPrint("Erreur lors de la mise à jour du produit : $e");
       throw Exception("Erreur lors de la mise à jour du produit");
     }
   }
@@ -35,9 +38,9 @@ class FirebaseService {
   Future<void> supprimerProduit(String docId) async {
     try {
       await _firestore.collection('produits').doc(docId).delete();
-      print("Produit supprimé avec succès !");
+      debugPrint("Produit supprimé avec succès !");
     } catch (e) {
-      print("Erreur lors de la suppression du produit : $e");
+      debugPrint("Erreur lors de la suppression du produit : $e");
       throw Exception("Erreur lors de la suppression du produit");
     }
   }

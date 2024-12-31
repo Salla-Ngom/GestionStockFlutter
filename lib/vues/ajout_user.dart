@@ -139,8 +139,7 @@ class _AddUserPageState extends State<AddUserPage> {
                                   Colors.blueAccent),
                             )
                           : ElevatedButton(
-                              onPressed:
-                                  _ajouterUser,
+                              onPressed: _ajouterUser,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.blueAccent,
                                 shape: RoundedRectangleBorder(
@@ -173,6 +172,7 @@ class _AddUserPageState extends State<AddUserPage> {
       ),
     );
   }
+
   Widget _buildTextField({
     required String label,
     required TextEditingController controller,
@@ -190,7 +190,7 @@ class _AddUserPageState extends State<AddUserPage> {
             borderRadius: BorderRadius.circular(10),
           ),
           filled: true,
-          fillColor: Colors.blue.withOpacity(0.1),
+          fillColor: Colors.blue.withValues(alpha: (0.1 * 255)),
         ),
         keyboardType: keyboardType,
         obscureText: obscureText,
@@ -198,6 +198,7 @@ class _AddUserPageState extends State<AddUserPage> {
       ),
     );
   }
+
   void _ajouterUser() {
     final String prenom = _prenomController.text;
     final String nom = _nomController.text;
@@ -224,19 +225,23 @@ class _AddUserPageState extends State<AddUserPage> {
       );
 
       _firebaseUsers.addUser(user).then((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Utilisateur ajouté avec succès !')),
-        );
-        _prenomController.clear();
-        _nomController.clear();
-        _emailController.clear();
-        _passwordController.clear();
-        _telController.clear();
-        _adresseController.clear();
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Utilisateur ajouté avec succès !')),
+          );
+          _prenomController.clear();
+          _nomController.clear();
+          _emailController.clear();
+          _passwordController.clear();
+          _telController.clear();
+          _adresseController.clear();
+        }
       }).catchError((e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur : $e')),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Erreur : $e')),
+          );
+        }
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

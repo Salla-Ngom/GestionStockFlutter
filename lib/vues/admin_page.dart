@@ -18,10 +18,10 @@ class _AdminPageState extends State<AdminPage> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    const HomeContent(),  
-    const AjoutPage(), 
-    const AjoutVente(),   
-    const AddUserPage(), 
+    const HomeContent(),
+    const AjoutPage(),
+    const AjoutVente(),
+    const AddUserPage(),
   ];
 
   @override
@@ -59,14 +59,14 @@ class _AdminPageState extends State<AdminPage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.add_box),
             label: 'Ajout Produit',
-          ),  
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.point_of_sale),
             label: 'Ajout Vente',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_add),
-            label: 'Ajout User', 
+            label: 'Ajout User',
           ),
         ],
       ),
@@ -199,25 +199,25 @@ class HomeContent extends StatelessWidget {
                     onPressed: () {
                       showMenu(
                         context: context,
-                        position: RelativeRect.fromLTRB(
-                            100.0, 100.0, 0.0, 0.0),
+                        position: RelativeRect.fromLTRB(100.0, 100.0, 0.0, 0.0),
                         items: [
                           PopupMenuItem<String>(
                             value: 'logout',
                             child: Text(
                               'Déconnexion',
-                              style: TextStyle(
-                                  color: Colors.red),
+                              style: TextStyle(color: Colors.red),
                             ),
                             onTap: () async {
-                              final Auth _auth = Auth();
-                              await _auth.signOut(); 
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const PageConnexion()),
-                              );
+                              final Auth auth = Auth();
+                              await auth.signOut();
+                              if (context.mounted) {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const PageConnexion()),
+                                );
+                              }
                             },
                           ),
                         ],
@@ -296,8 +296,8 @@ class HomeContent extends StatelessWidget {
 
                       final totalPrix = venteSnapshot.data?.docs.fold<double>(
                               0.0,
-                              (sum, doc) =>
-                                  sum +
+                              (total, doc) =>
+                                  total +
                                   (doc['prixTotal'] as num? ?? 0).toDouble()) ??
                           0.0;
 
@@ -308,8 +308,6 @@ class HomeContent extends StatelessWidget {
                       );
                     },
                   ),
-
-                  
                   StreamBuilder(
                     stream: FirebaseFirestore.instance
                         .collection('produits')
@@ -324,8 +322,8 @@ class HomeContent extends StatelessWidget {
                       final totalQuantite = produitSnapshot.data?.docs
                               .fold<int>(
                                   0,
-                                  (sum, doc) =>
-                                      sum +
+                                  (total, doc) =>
+                                      total +
                                       (doc['quantite'] as num? ?? 0).toInt()) ??
                           0;
 
@@ -374,14 +372,18 @@ class HomeContent extends StatelessWidget {
                             onPressed: () async {
                               try {
                                 await FirebaseService().supprimerProduit(docId);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text('Produit supprimé.')),
-                                );
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text('Produit supprimé.')),
+                                  );
+                                }
                               } catch (e) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Erreur : $e')),
-                                );
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Erreur : $e')),
+                                  );
+                                }
                               }
                             },
                           ),
@@ -419,7 +421,6 @@ class HomeContent extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final user = users[index].data();
 
-                     
                       final String prenom = user['prenom'] ?? '';
                       final String nom = user['nom'] ?? '';
                       final String initiales =
@@ -428,11 +429,9 @@ class HomeContent extends StatelessWidget {
 
                       return ListTile(
                         leading: CircleAvatar(
-                          backgroundColor:
-                              Colors.blue, 
+                          backgroundColor: Colors.blue,
                           child: Text(
-                            initiales
-                                .toUpperCase(), 
+                            initiales.toUpperCase(),
                             style: const TextStyle(color: Colors.white),
                           ),
                         ),
@@ -474,7 +473,7 @@ class HomeContent extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final venteData =
                           ventes[index].data() as Map<String, dynamic>;
-                      final docId = ventes[index].id; 
+                      final docId = ventes[index].id;
                       final nomClient = venteData['nomClient'] ?? 'Nom inconnu';
 
                       return Card(
@@ -489,7 +488,6 @@ class HomeContent extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                             
                               Text(
                                 'ID Vente : $docId',
                                 style: const TextStyle(
@@ -498,18 +496,15 @@ class HomeContent extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(height: 8),
-                              
                               Text(
                                 'Client : $nomClient',
                                 style: const TextStyle(fontSize: 14),
                               ),
                               const SizedBox(height: 12),
-                              
                               Align(
                                 alignment: Alignment.centerRight,
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    
                                     _afficherDetailsVente(context, venteData);
                                   },
                                   style: ElevatedButton.styleFrom(
@@ -589,7 +584,7 @@ class InfoCard extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 5),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1 * 255),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Column(

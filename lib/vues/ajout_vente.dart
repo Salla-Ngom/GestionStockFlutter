@@ -26,7 +26,7 @@ class AjoutVenteBody extends StatefulWidget {
 }
 
 class _AjoutVenteBodyState extends State<AjoutVenteBody> {
-  String? _selectedProduct; 
+  String? _selectedProduct;
   final TextEditingController _quantiteController = TextEditingController();
   final TextEditingController _nomClientController = TextEditingController();
   double _prixTotal = 0.0;
@@ -66,8 +66,6 @@ class _AjoutVenteBodyState extends State<AjoutVenteBody> {
             ),
           ),
           const SizedBox(height: 30),
-
-          
           StreamBuilder<QuerySnapshot>(
             stream:
                 FirebaseFirestore.instance.collection('produits').snapshots(),
@@ -107,8 +105,6 @@ class _AjoutVenteBodyState extends State<AjoutVenteBody> {
             },
           ),
           const SizedBox(height: 20),
-
-         
           TextField(
             controller: _quantiteController,
             keyboardType: TextInputType.number,
@@ -125,8 +121,6 @@ class _AjoutVenteBodyState extends State<AjoutVenteBody> {
             },
           ),
           const SizedBox(height: 20),
-
-         
           TextField(
             controller: _nomClientController,
             decoration: const InputDecoration(
@@ -200,10 +194,15 @@ class _AjoutVenteBodyState extends State<AjoutVenteBody> {
                     await FirebaseFirestore.instance
                         .collection('ventes')
                         .add(vente);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Vente ajoutée avec succès')),
-                    );
+
+                    if (context.mounted) {
+                      // Vérification si le widget est encore monté
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Vente ajoutée avec succès')),
+                      );
+                    }
+
                     setState(() {
                       _selectedProduct = null;
                       _quantiteController.clear();
@@ -211,10 +210,12 @@ class _AjoutVenteBodyState extends State<AjoutVenteBody> {
                       _prixTotal = 0.0;
                     });
                   } catch (error) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                          content: Text('Erreur lors de l\'ajout : $error')),
-                    );
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text('Erreur lors de l\'ajout : $error')),
+                      );
+                    }
                   }
                 },
                 child: const Text(

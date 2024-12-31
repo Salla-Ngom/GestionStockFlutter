@@ -22,14 +22,12 @@ class PageConnexionCorps extends StatefulWidget {
 }
 
 class _PageConnexionState extends State<PageConnexionCorps> {
-  final _formKey = GlobalKey<FormState>(); 
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _isLoading = false; 
+  bool _isLoading = false;
 
-  
   final Auth _auth = Auth();
-
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +41,6 @@ class _PageConnexionState extends State<PageConnexionCorps> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 30),
-
-                
                 Container(
                   padding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -61,10 +57,7 @@ class _PageConnexionState extends State<PageConnexionCorps> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 50),
-
-                
                 const Text(
                   "Bienvenu(e)",
                   style: TextStyle(
@@ -72,10 +65,7 @@ class _PageConnexionState extends State<PageConnexionCorps> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-
                 const SizedBox(height: 10),
-
-                
                 const Text(
                   "dans la plateforme de gestion de stock",
                   style: TextStyle(
@@ -83,10 +73,7 @@ class _PageConnexionState extends State<PageConnexionCorps> {
                     fontStyle: FontStyle.italic,
                   ),
                 ),
-
                 const SizedBox(height: 30),
-
-                
                 const Text(
                   "Veuillez-vous connecter",
                   style: TextStyle(
@@ -94,14 +81,11 @@ class _PageConnexionState extends State<PageConnexionCorps> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-
                 const SizedBox(height: 30),
-
                 Form(
                   key: _formKey,
                   child: Column(
                     children: [
-                    
                       TextFormField(
                         controller: _emailController,
                         decoration: InputDecoration(
@@ -117,10 +101,7 @@ class _PageConnexionState extends State<PageConnexionCorps> {
                           return null;
                         },
                       ),
-
                       const SizedBox(height: 20),
-
-                     
                       TextFormField(
                         controller: _passwordController,
                         obscureText: true,
@@ -137,12 +118,9 @@ class _PageConnexionState extends State<PageConnexionCorps> {
                           return null;
                         },
                       ),
-
                       const SizedBox(height: 30),
-
-                      
                       _isLoading
-                          ? const CircularProgressIndicator() 
+                          ? const CircularProgressIndicator()
                           : ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.blue.shade700,
@@ -161,26 +139,31 @@ class _PageConnexionState extends State<PageConnexionCorps> {
                                         });
 
                                         try {
-                                    
+                                          // Vérification du widget monté avant d'appeler la méthode de connexion
                                           if (mounted) {
-                                             await _auth.signInWithEmailAndPassword(
-                                            email: _emailController.text,
-                                            password: _passwordController.text,
-                                            context: context,
-                                          );
+                                            await _auth
+                                                .signInWithEmailAndPassword(
+                                              email: _emailController.text,
+                                              password:
+                                                  _passwordController.text,
+                                              context: context,
+                                            );
                                           }
                                         } catch (e) {
-                                         
+                                          // Si une erreur survient, on vérifie également si le widget est monté
                                           if (mounted) {
                                             setState(() {
                                               _isLoading = false;
                                             });
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              SnackBar(
-                                                  content: Text(
-                                                      'Erreur de connexion: $e')),
-                                            );
+
+                                            if (context.mounted) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                    content: Text(
+                                                        'Erreur de connexion: $e')),
+                                              );
+                                            }
                                           }
                                         }
                                       }
