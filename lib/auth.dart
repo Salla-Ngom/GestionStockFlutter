@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'dart:developer'; 
 import '../vues/home.dart';
 import '../vues/admin_page.dart';
+import '../vues/page_connexion.dart';
 
 class Auth {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -49,24 +50,40 @@ class Auth {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Rôle utilisateur non pris en charge.')),
             );
+             Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const PageConnexion()),
+            );
           }
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Votre compte est désactivé.')),
           );
+           Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const PageConnexion()),
+            );
         }
       } else {
         if (!context.mounted) return; 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Votre compte n\'existe pas!')),
         );
+         Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const PageConnexion()),
+            );
       }
     }
   } catch (e) {
     if (!context.mounted) return; 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Erreur lors de la connexion.')),
+      const SnackBar(content: Text('informations Incorrectes!.')),
     );
+     Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const PageConnexion()),
+            );
   }
 }
 

@@ -1,26 +1,16 @@
+// Le bloc buildscript est souvent nécessaire pour les plugins comme Flutter ou Firebase.
+
+
+// Déclaration des plugins, doit être placé après buildscript
 plugins {
     id "com.android.application"
     id "kotlin-android"
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
-    id "com.google.gms.google-services"
-
+    id "com.google.gms.google-services"  // Plugin Firebase Google Services
 }
-dependencies {
-  // Import the Firebase BoM
-  implementation platform('com.google.firebase:firebase-bom:33.7.0')
 
-
-  // TODO: Add the dependencies for Firebase products you want to use
-  // When using the BoM, don't specify versions in Firebase dependencies
-  implementation 'com.google.firebase:firebase-analytics'
-
-
-  // Add the dependencies for any other desired Firebase products
-  // https://firebase.google.com/docs/android/setup#available-libraries
-}
 android {
-    namespace = "com.example.gestionstock"
+    namespace = "com.example.gestionstock"  // Remplacez par votre propre namespace
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -34,25 +24,32 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.gestionstock"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
+        applicationId = "com.example.gestionstock"  // ID unique de votre application
         minSdk = 21
         targetSdk = flutter.targetSdkVersion
-         versionCode 1
-    versionName "1.0.0"
+        versionCode 1
+        versionName "1.0.0"  // La version de votre application
     }
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.debug
+            signingConfig = signingConfigs.debug  // Ajouter une configuration de signature pour la production
         }
     }
 }
 
+dependencies {
+    implementation platform('com.google.firebase:firebase-bom:33.7.0')  // Importation de Firebase BoM
+    implementation 'com.google.firebase:firebase-analytics'  // Firebase Analytics (ajoutez d'autres produits Firebase si nécessaire)
+    // Si vous utilisez Firebase Authentication
+    implementation 'com.google.firebase:firebase-auth'
+    // Autres dépendances Firebase que vous pouvez ajouter
+    // implementation 'com.google.firebase:firebase-firestore'
+    // implementation 'com.google.firebase:firebase-storage'
+}
+
+
+
 flutter {
-    source = "../.."
+    source = "../.."  // Répertoire source de Flutter (généralement, pas besoin de modifier)
 }
